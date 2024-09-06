@@ -1,7 +1,6 @@
 # MetaPass
 
-A blockchain-based ticketing platform inspired by TicketMaster.
-Tutorial by Dapp University on YouTube. 
+A blockchain-based ticketing platform inspired by Dapp University on YouTube. 
 
 ## Technology Stack & Tools
 
