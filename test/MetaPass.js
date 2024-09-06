@@ -101,8 +101,36 @@ describe("MetaPass", () => {
     })
 
     it("Updates contract balance", async () => {
-      const balance = await ethers.provider.getBalance(metaPass.address); //get the balance of the contract
+      const balance = await ethers.provider.getBalance(metaPass.address); //get the balance of the contract address
       expect(balance).to.equal(AMOUNT);
     })
+  })
+
+  describe("Withdrawing", async () => {
+    const ID = 1; //example occasion id
+    const SEAT = 50; //example seat number bought
+    const AMOUNT = ethers.utils.parseUnits("1", "ether"); //example amount paid
+    let balanceBefore;
+
+    beforeEach(async () => {
+      balanceBefore = await ethers.provider.getBalance(deployer.address);
+
+      let transaction = await metaPass.connect(buyer).mint(ID, SEAT, { value: AMOUNT });
+      await transaction.wait();
+
+      transaction = await metaPass.connect(deployer).withdraw();
+      await transaction.wait();
+    })
+
+    it("Updates owner balance", async () => {
+      const balanceAfter = await ethers.provider.getBalance(deployer.address);
+      expect(balanceAfter).to.greaterThan(balanceBefore); //Just check if there is any amount added to the owner balance
+    })
+
+    it("Updates contract balance", async () => {
+      const balance = await ethers.provider.getBalance(metaPass.address);
+      expect(balance).to.equal(0); //empty the contract balance
+    })
+
   })
 })
