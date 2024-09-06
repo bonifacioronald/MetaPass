@@ -82,4 +82,8 @@ contract MetaPass is ERC721 {
         return occupiedSeatsPerOccasion[_id];
     }
 
+    function withdraw() public onlyOwner {
+        (bool isSuccess, ) = owner.call{value: address(this).balance}(""); //call the owner with an empty string and the metadata of the balance of this (the contract)'s balance
+        require(isSuccess);
+    }
 }
