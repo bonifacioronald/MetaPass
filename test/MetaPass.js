@@ -68,4 +68,41 @@ describe("MetaPass", () => {
       expect(ocassion.location).to.equal(OCCASION_LOCATION);
     })
   })
+
+  describe("Minting", async () => {
+    const ID = 1; //example occasion id
+    const SEAT = 50; //example seat number bought
+    const AMOUNT = ethers.utils.parseUnits("1", "ether"); //example amount paid
+
+    beforeEach(async () => {
+      const transaction = await metaPass.connect(buyer).mint(ID, SEAT, { value: AMOUNT }); //connect the buyer account to the contract (sign the tx) and mint a ticket
+      await transaction.wait();
+    })
+
+    it("Update ticket count", async () => {
+        const occassion = await metaPass.getOccasion(ID);
+        expect(occassion.remainingTickets).to.equal(OCCASION_MAX_TICKETS - 1)
+    })
+
+    it("Update buying status", async () => {
+      const status = await metaPass.hasBought(ID, buyer.address);
+      expect(status).to.equal(true);
+    })
+
+    it("Updates seat status", async () => {
+      const owner = await metaPass.seatOwnership(ID, SEAT);
+      expect(owner).to.equal(buyer.address);
+    })
+
+    it("Updates overall seating status", async () => {
+      const seats = await metaPass.getAllSeatNumbersTakenInAnOccasion(ID);
+      expect(seats.length).to.equal(1);
+      expect(seats[0]).to.equal(SEAT);
+    })
+
+    it("Updates contract balance", async () => {
+      const balance = await ethers.provider.getBalance(metaPass.address); //get the balance of the contract
+      expect(balance).to.equal(AMOUNT);
+    })
+  })
 })
