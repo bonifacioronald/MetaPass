@@ -63,7 +63,7 @@ function App() {
     <div>
       <header>
         <Navigation account={account} setAccount={setAccount}/>
-        <h2 className='header__title'><b>Event</b> Tickets</h2>
+        <h2 className='header__title'><b>Discover</b> Experience</h2>
       </header>
 
       <Sort/>
