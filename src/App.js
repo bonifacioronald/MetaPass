@@ -84,6 +84,14 @@ function App() {
         ))}
       </div>
 
+      {toggle && (
+        <SeatChart
+          occasion={occasion}
+          metaPass={metaPass}
+          provider={provider}
+          setToggle={setToggle}
+        />
+      )}
     </div>
   );
 }
