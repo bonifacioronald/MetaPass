@@ -17,8 +17,12 @@ function App() {
 
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState(null);
+
   const [metaPass, setMetaPass] = useState(null);
+  const [occasions, setOccasions] = useState([])
   
+  const [occasion, setOccasion] = useState({});
+  const [toggle, setToggle] = useState(false);
 
   const loadBlockchainData = async() => {
     //Establish Connection with Ethereum Provider
@@ -31,7 +35,17 @@ function App() {
     const metaPass = new ethers.Contract(address, MetaPass, provider)
     setMetaPass(metaPass)
 
-    console.log(metaPass.address)
+    const totalOccasions = await metaPass.totalOccasions()
+    const occasions = []
+
+    for (let i = 1; i <= totalOccasions; i++) {
+      const occasion = await metaPass.getOccasion(i)
+      occasions.push(occasion)
+    }
+
+    setOccasions(occasions)
+
+    console.log(occasions)
 
     //Refresh Account
     window.ethereum.on('accountsChanged', async () => {
@@ -52,8 +66,24 @@ function App() {
         <h2 className='header__title'><b>Event</b> Tickets</h2>
       </header>
 
-      <h1>MetaPass</h1>
-      <p>{account}</p>
+      <Sort/>
+
+      <div className='cards'>
+        {occasions.map((occasion, index) => (
+          <Card
+            occasion={occasion}
+            id={index+1}
+            metaPass={metaPass}
+            provider={provider}
+            account={account}
+            toggle={toggle}
+            setToggle={setToggle}
+            setOccasion={setOccasion}
+            key={index}
+          />
+        ))}
+      </div>
+
     </div>
   );
 }
