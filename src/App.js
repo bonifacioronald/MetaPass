@@ -17,6 +17,7 @@ function App() {
 
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState(null);
+  const [metaPass, setMetaPass] = useState(null);
   
 
   const loadBlockchainData = async() => {
@@ -28,6 +29,8 @@ function App() {
     const network = await provider.getNetwork()
     const address = config[network.chainId].MetaPass.address  //Look at config.json
     const metaPass = new ethers.Contract(address, MetaPass, provider)
+    setMetaPass(metaPass)
+
     console.log(metaPass.address)
 
     //Refresh Account
