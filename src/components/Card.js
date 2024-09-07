@@ -28,7 +28,7 @@ const Card = ({ occasion, toggle, setToggle, setOccasion }) => {
           ETH
         </p>
 
-        {occasion.tickets.toString() === "0" ? (
+        {occasion.remainingTickets.toString() === "0" ? (
           <button
             type="button"
             className='card__button--out'

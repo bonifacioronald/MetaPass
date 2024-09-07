@@ -14,40 +14,47 @@ import MetaPass from './abis/MetaPass.json'
 import config from './config.json'
 
 function App() {
-  const [provider, setProvider] = useState(null)
-  const [account, setAccount] = useState(null)
 
-  const [metaPass, setMetaPass] = useState(null)
+  const [provider, setProvider] = useState(null);
+  const [account, setAccount] = useState(null);
+
+  const [metaPass, setMetaPass] = useState(null);
   const [occasions, setOccasions] = useState([])
+  
+  const [occasion, setOccasion] = useState({});
+  const [toggle, setToggle] = useState(false);
 
-  const [occasion, setOccasion] = useState({})
-  const [toggle, setToggle] = useState(false)
-
-  const loadBlockchainData = async () => {
+  const loadBlockchainData = async() => {
+    //Establish Connection with Ethereum Provider
     const provider = new ethers.providers.Web3Provider(window.ethereum)
-    setProvider(provider)
+    setProvider(provider);
 
+    //Creating a new metaPass instance to connect to blockchain ethers.js
     const network = await provider.getNetwork()
-    const metaPass = new ethers.Contract(config[network.chainId].MetaPass.address, MetaPass, provider)
+    const address = config[network.chainId].MetaPass.address  //Look at config.json
+    const metaPass = new ethers.Contract(address, MetaPass, provider)
     setMetaPass(metaPass)
 
     const totalOccasions = await metaPass.totalOccasions()
     const occasions = []
 
-    for (var i = 1; i <= totalOccasions; i++) {
+    for (let i = 1; i <= totalOccasions; i++) {
       const occasion = await metaPass.getOccasion(i)
       occasions.push(occasion)
     }
 
     setOccasions(occasions)
 
+    console.log(occasions)
+
+    //Refresh Account
     window.ethereum.on('accountsChanged', async () => {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
       const account = ethers.utils.getAddress(accounts[0])
       setAccount(account)
     })
   }
-
+  
   useEffect(() => {
     loadBlockchainData()
   }, [])
@@ -55,18 +62,17 @@ function App() {
   return (
     <div>
       <header>
-        <Navigation account={account} setAccount={setAccount} />
-
-        <h2 className="header__title"><strong>Event</strong> Tickets</h2>
+        <Navigation account={account} setAccount={setAccount}/>
+        <h2 className='header__title'><b>Event</b> Tickets</h2>
       </header>
 
-      <Sort />
+      <Sort/>
 
       <div className='cards'>
         {occasions.map((occasion, index) => (
           <Card
             occasion={occasion}
-            id={index + 1}
+            id={index+1}
             metaPass={metaPass}
             provider={provider}
             account={account}
@@ -78,14 +84,6 @@ function App() {
         ))}
       </div>
 
-      {toggle && (
-        <SeatChart
-          occasion={occasion}
-          metaPass={metaPass}
-          provider={provider}
-          setToggle={setToggle}
-        />
-      )}
     </div>
   );
 }
