@@ -15,9 +15,21 @@ import config from './config.json'
 
 function App() {
 
+  const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState(null);
+  
 
   const loadBlockchainData = async() => {
+    //Establish Connection with Ethereum Provider
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    setProvider(provider);
+
+    //Creating a new metaPass instance to connect to blockchain ethers.js
+    const network = await provider.getNetwork()
+    const address = config[network.chainId].MetaPass.address  //Look at config.json
+    const metaPass = new ethers.Contract(address, MetaPass, provider)
+    console.log(metaPass.address)
+
     //Refresh Account
     window.ethereum.on('accountsChanged', async () => {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
