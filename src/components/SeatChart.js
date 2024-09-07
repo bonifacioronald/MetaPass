@@ -11,7 +11,7 @@ const SeatChart = ({ occasion, metaPass, provider, setToggle }) => {
   const [hasSold, setHasSold] = useState(false)
 
   const getSeatsTaken = async () => {
-    const seatsTaken = await metaPass.getSeatsTaken(occasion.id)
+    const seatsTaken = await metaPass.getAllSeatNumbersTakenInAnOccasion(occasion.id)
     setSeatsTaken(seatsTaken)
   }
 
